@@ -1,8 +1,7 @@
-import { useState } from "react";
-
 import useInput from "../hooks/use-input";
 
 const validateEmail = (email) => {
+  // eslint-disable-next-line no-useless-escape
   var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
   if (email.match(mailformat)) {
     return true;
@@ -21,11 +20,14 @@ const SimpleInput = (props) => {
     reset: resetNameInput,
   } = useInput((value) => value.trim() !== "");
 
-  const [enteredEmail, setEnteredEmail] = useState("");
-  const [enteredEmailTouched, setEnteredEmailTouched] = useState(false);
-
-  const enteredEmailIsValid = validateEmail(enteredEmail);
-  const emailInputIsInvalid = !enteredEmailIsValid && enteredEmailTouched;
+  const {
+    value: enteredEmail,
+    isValid: enteredEmailIsValid,
+    hasError: emailInputHasError,
+    valueChangeHandler: emailInputChangeHandler,
+    inputBlurHandler: emailInputBlurHandler,
+    reset: resetEmailInput,
+  } = useInput((value) => validateEmail(value));
 
   let formIsValid = false;
 
@@ -33,14 +35,6 @@ const SimpleInput = (props) => {
   if (enteredNameIsValid && enteredEmailIsValid) {
     formIsValid = true;
   }
-
-  const emailInputChangeHandler = (e) => {
-    setEnteredEmail(e.target.value);
-  };
-
-  const emailInputBlurHandler = (e) => {
-    setEnteredEmailTouched(true);
-  };
 
   const formSubmitHandler = (e) => {
     e.preventDefault();
@@ -53,16 +47,14 @@ const SimpleInput = (props) => {
 
     // inputRef.current.value = "" => NOT IDEAL! DON'T MANIPULATE THE DOM!
     resetNameInput();
-
-    setEnteredEmail("");
-    setEnteredEmailTouched(false);
+    resetEmailInput();
   };
 
   const nameInputClasses = nameInputHasError
     ? "form-control invalid"
     : "form-control";
 
-  const emailInputClasses = emailInputIsInvalid
+  const emailInputClasses = emailInputHasError
     ? "form-control invalid"
     : "form-control";
 
@@ -90,7 +82,7 @@ const SimpleInput = (props) => {
           onBlur={emailInputBlurHandler}
           value={enteredEmail}
         />
-        {emailInputIsInvalid && (
+        {emailInputHasError && (
           <p className="error-text">Please enter a valid email.</p>
         )}
       </div>
