@@ -10,6 +10,8 @@ const validateEmail = (email) => {
   }
 };
 
+const isNotEmpty = (value) => value.trim() !== "";
+
 const BasicForm = (props) => {
   const {
     value: enteredFirstName,
@@ -18,7 +20,7 @@ const BasicForm = (props) => {
     valueChangeHandler: firstNameChangeHandler,
     inputBlurHandler: firstNameBlurHandler,
     reset: resetFirstName,
-  } = useInput((v) => v.trim() !== "");
+  } = useInput(isNotEmpty);
 
   const {
     value: enteredLastName,
@@ -27,7 +29,7 @@ const BasicForm = (props) => {
     valueChangeHandler: lastNameChangeHandler,
     inputBlurHandler: lastNameBlurHandler,
     reset: resetLastName,
-  } = useInput((v) => v.trim() !== "");
+  } = useInput(isNotEmpty);
 
   const {
     value: enteredEmail,
